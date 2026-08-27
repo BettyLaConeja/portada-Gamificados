@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Gamifica2 | Gamificación e Inteligencia Artificial</title>
+
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    font-family: "Segoe UI", Arial, sans-serif;
+    background:
+        radial-gradient(circle at 20% 20%, #7c3aed 0%, transparent 30%),
+        radial-gradient(circle at 80% 20%, #06b6d4 0%, transparent 30%),
+        radial-gradient(circle at 50% 90%, #ec4899 0%, transparent 35%),
+        linear-gradient(135deg, #09002b, #110047 45%, #001b3d);
+    color: white;
+}
+
+/* FONDO ANIMADO */
+.background {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+    z-index: 0;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(2px);
+    opacity: .45;
+    animation: flotar 8s infinite ease-in-out;
+}
+
+.orb:nth-child(1) {
+    width: 180px;
+    height: 180px;
+    background: #ff3cac;
+    top: 8%;
+    left: 8%;
+}
+
+.orb:nth-child(2) {
+    width: 130px;
+    height: 130px;
+    background: #00e5ff;
+    top: 65%;
+    left: 12%;
+    animation-delay: 2s;
+}
+
+.orb:nth-child(3) {
+    width: 220px;
+    height: 220px;
+    background: #8b5cf6;
+    right: 5%;
+    top: 15%;
+    animation-delay: 1s;
+}
+
+.orb:nth-child(4) {
+    width: 150px;
+    height: 150px;
+    background: #22c55e;
+    right: 15%;
+    bottom: 5%;
+    animation-delay: 3s;
+}
+
+@keyframes flotar {
+    0%, 100% {
+        transform: translate(0,0) scale(1);
+    }
+    50% {
+        transform: translate(30px,-35px) scale(1.15);
+    }
+}
+
+/* PARTÍCULAS */
+.particle {
+    position: absolute;
+    width: 5px;
+    height: 5px;
+    background: white;
+    border-radius: 50%;
+    opacity: .7;
+    animation: subir linear infinite;
+}
+
+@keyframes subir {
+    from {
+        transform: translateY(110vh);
+        opacity: 0;
+    }
+    20%, 80% {
+        opacity: .8;
+    }
+    to {
+        transform: translateY(-20vh);
+        opacity: 0;
+    }
+}
+
+/* ELEMENTOS FLOTANTES DE JUEGOS */
+.juegos-flotantes {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.nodo-juego {
+    position: absolute;
+    pointer-events: auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 22px;
+    border-radius: 50px;
+    background: linear-gradient(90deg, rgba(6, 182, 212, 0.35), rgba(139, 92, 246, 0.35), rgba(236, 72, 153, 0.35));
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    backdrop-filter: blur(14px);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    box-shadow: 0 0 20px rgba(139, 92, 246, 0.4);
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    animation: flotarNodo 6s infinite ease-in-out;
+}
+
+.nodo-juego .icono-juego {
+    font-size: 22px;
+}
+
+.nodo-juego:hover {
+    transform: scale(1.15) translateY(-5px);
+    background: linear-gradient(90deg, #06b6d4, #8b5cf6, #ec4899);
+    box-shadow: 0 0 20px #22d3ee, 0 0 45px #a855f7;
+}
+
+/* POSICIONAMIENTO Y DESFASES DE ANIMACIÓN */
+.nodo-fisica {
+    top: 18%;
+    left: 8%;
+    animation-delay: 0s;
+}
+
+.nodo-quimica {
+    top: 22%;
+    right: 8%;
+    animation-delay: 1.5s;
+}
+
+.nodo-matematicas {
+    bottom: 22%;
+    left: 7%;
+    animation-delay: 3s;
+}
+
+.nodo-filosofia {
+    bottom: 24%;
+    right: 7%;
+    animation-delay: 4.5s;
+}
+
+@keyframes flotarNodo {
+    0%, 100% {
+        transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+        transform: translateY(-18px) rotate(2deg);
+    }
+}
+
+/* CONTENEDOR PRINCIPAL */
+.contenedor {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 30px;
+}
+
+/* INSIGNIA */
+.badge {
+    display: inline-block;
+    padding: 10px 22px;
+    border: 1px solid rgba(255,255,255,.4);
+    border-radius: 30px;
+    background: rgba(255,255,255,.1);
+    backdrop-filter: blur(10px);
+    font-size: 15px;
+    letter-spacing: 2px;
+    margin-bottom: 20px;
+    animation: aparecer 1s ease;
+}
+
+.badge span {
+    color: #67e8f9;
+    font-weight: bold;
+}
+
+/* TÍTULO */
+.titulo {
+    text-align: center;
+    font-size: clamp(55px, 9vw, 120px);
+    line-height: .9;
+    font-weight: 900;
+    letter-spacing: -5px;
+    background: linear-gradient(90deg, #22d3ee, #a78bfa, #f472b6, #facc15, #22d3ee);
+    background-size: 300% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    animation: aparecer 1.2s ease, gradiente 6s linear infinite;
+}
+
+@keyframes gradiente {
+    to { background-position: 300% center; }
+}
+
+.subtitulo {
+    margin-top: 22px;
+    font-size: clamp(20px, 3vw, 32px);
+    text-align: center;
+    font-weight: 600;
+    max-width: 850px;
+    animation: aparecer 1.6s ease;
+}
+
+.subtitulo span {
+    color: #67e8f9;
+}
+
+.descripcion {
+    margin-top: 18px;
+    max-width: 700px;
+    text-align: center;
+    color: #dbeafe;
+    font-size: 17px;
+    line-height: 1.6;
+    animation: aparecer 2s ease;
+}
+
+/* TARJETAS */
+.tarjetas {
+    display: flex;
+    gap: 18px;
+    margin-top: 35px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.tarjeta {
+    width: 155px;
+    padding: 18px 12px;
+    border-radius: 20px;
+    text-align: center;
+    background: rgba(255,255,255,.1);
+    border: 1px solid rgba(255,255,255,.2);
+    backdrop-filter: blur(12px);
+    transition: .3s;
+    animation: entrar 1s ease backwards;
+}
+
+.tarjeta:nth-child(1) { animation-delay: .3s; }
+.tarjeta:nth-child(2) { animation-delay: .5s; }
+.tarjeta:nth-child(3) { animation-delay: .7s; }
+.tarjeta:nth-child(4) { animation-delay: .9s; }
+
+.tarjeta:hover {
+    transform: translateY(-12px) scale(1.05);
+    background: rgba(255,255,255,.18);
+    box-shadow: 0 15px 35px rgba(0,0,0,.3);
+}
+
+.icono {
+    font-size: 38px;
+    margin-bottom: 8px;
+}
+
+.tarjeta h3 { font-size: 16px; }
+
+.tarjeta p {
+    font-size: 12px;
+    color: #cbd5e1;
+    margin-top: 5px;
+}
+
+.pie {
+    position: absolute;
+    bottom: 18px;
+    font-size: 13px;
+    color: #94a3b8;
+    letter-spacing: 1px;
+}
+
+/* ANIMACIONES GENERALES */
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes entrar {
+    from {
+        opacity: 0;
+        transform: translateY(60px) scale(.8);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* RESPONSIVE */
+@media(max-width: 900px) {
+    .juegos-flotantes {
+        position: relative;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 25px;
+        z-index: 3;
+    }
+
+    .nodo-juego {
+        position: static;
+        animation: none;
+    }
+}
+
+@media(max-width: 600px) {
+    body { overflow-y: auto; }
+    .contenedor { padding: 25px 15px 50px; }
+    .titulo { letter-spacing: -2px; }
+    .tarjetas { gap: 10px; }
+    .tarjeta { width: 135px; }
+    .pie { position: static; margin-top: 25px; }
+}
+</style>
+</head>
+
+<body>
+
+<div class="background">
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div class="orb"></div>
+    <div id="particulas"></div>
+</div>
+
+<div class="juegos-flotantes">
+    <a href="fisica.html" class="nodo-juego nodo-fisica">
+        <span class="icono-juego">⚛️</span>
+        <span>Física</span>
+    </a>
+
+    <a href="https://bettylaconeja.github.io/quimica/" class="nodo-juego nodo-quimica">
+        <span class="icono-juego">🧪</span>
+        <span>Química</span>
+    </a>
+
+    <a href="matematicas.html" class="nodo-juego nodo-matematicas">
+        <span class="icono-juego">📐</span>
+        <span>Matemáticas</span>
+    </a>
+
+    <a href="https://bettylaconeja.github.io/PortadaFilosofia/" class="nodo-juego nodo-filosofia">
+        <span class="icono-juego">🏛️</span>
+        <span>Filosofía</span>
+    </a>
+</div>
+
+<main class="contenedor">
+
+    <div class="badge">
+        PROYECTO EDUCATIVO · <span>STEAM + IA</span>
+    </div>
+
+    <h1 class="titulo">GAMIFICA2</h1>
+
+    <h2 class="subtitulo">
+        Gamificación e Inteligencia Artificial
+        <span>para Transformar los Aprendizajes</span>
+    </h2>
+
+    <p class="descripcion">
+        Aprender también puede ser un desafío, una aventura,
+        una misión y un juego. Una propuesta para integrar
+        tecnología, creatividad, gamificación e inteligencia
+        artificial en el aula.
+    </p>
+
+    <section class="tarjetas">
+        <div class="tarjeta">
+            <div class="icono">🎮</div>
+            <h3>Gamificación</h3>
+            <p>Aprender jugando</p>
+        </div>
+
+        <div class="tarjeta">
+            <div class="icono">🤖</div>
+            <h3>Inteligencia Artificial</h3>
+            <p>Crear nuevas experiencias</p>
+        </div>
+
+        <div class="tarjeta">
+            <div class="icono">💡</div>
+            <h3>Creatividad</h3>
+            <p>Ideas que se convierten en proyectos</p>
+        </div>
+
+        <div class="tarjeta">
+            <div class="icono">🚀</div>
+            <h3>Aprendizaje</h3>
+            <p>Desafíos que dejan huella</p>
+        </div>
+    </section>
+
+    <div class="pie">
+        
+    </div>
+
+</main>
+
+<script>
+// CREAR PARTÍCULAS
+const contenedor = document.getElementById("particulas");
+
+for(let i = 0; i < 70; i++){
+    const particula = document.createElement("div");
+    particula.classList.add("particle");
+    particula.style.left = Math.random() * 100 + "%";
+    particula.style.animationDuration = (5 + Math.random() * 10) + "s";
+    particula.style.animationDelay = (Math.random() * 10) + "s";
+
+    const tamaño = 2 + Math.random() * 5;
+    particula.style.width = tamaño + "px";
+    particula.style.height = tamaño + "px";
+
+    contenedor.appendChild(particula);
+}
+
+// EFECTO DE MOVIMIENTO DEL MOUSE
+document.addEventListener("mousemove", e => {
+    const x = (e.clientX / window.innerWidth - .5) * 15;
+    const y = (e.clientY / window.innerHeight - .5) * 15;
+
+    document.querySelectorAll(".orb").forEach((orb, index) => {
+        const intensidad = (index + 1) * 0.4;
+        orb.style.marginLeft = x * intensidad + "px";
+        orb.style.marginTop = y * intensidad + "px";
+    });
+});
+</script>
+
+</body>
+</html>
